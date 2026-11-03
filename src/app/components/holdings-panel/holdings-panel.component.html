@@ -1,0 +1,42 @@
+<div class="panel-heading">
+	<div><p class="eyebrow">Airports</p><h2>Company holdings</h2></div>
+	<span class="count-badge">{{ holdings.length }}</span>
+</div>
+@if (holdings.length) {
+	<div class="holdings-controls">
+		<label class="holdings-search">Search airport
+			<input type="search" [ngModel]="search()" (ngModelChange)="setSearch($event)" name="holdingsSearch" placeholder="Airport code" />
+		</label>
+		<label>Sort by
+			<select [ngModel]="sort()" (ngModelChange)="setSort($event)" name="holdingsSort">
+				<option value="value">Value</option>
+				<option value="code">Airport code</option>
+			</select>
+		</label>
+		<button class="holdings-sort-direction" type="button" (click)="toggleDirection()" [attr.aria-label]="'Sort ' + (sort() === 'code' ? 'airport code' : 'value') + ' ' + (direction() === 'asc' ? 'descending' : 'ascending')" title="Change sort direction">
+			{{ direction() === 'asc' ? '↑' : '↓' }}
+		</button>
+	</div>
+}
+@if (filteredHoldings.length) {
+	<div class="holdings-list">
+		@for (holding of paginatedHoldings; track holding.code) {
+			<div class="holding-row">
+				<span class="airport-code">{{ holding.code }}</span>
+				<span class="holding-location">{{ holding.lat | number:'1.2-2' }}, {{ holding.lon | number:'1.2-2' }}</span>
+				<strong class="value-money">{{ formatMoney(holding.value) }}</strong>
+			</div>
+		}
+	</div>
+	<div class="holdings-pagination">
+		<span>Showing {{ rangeStart }}–{{ rangeEnd }} of {{ filteredHoldings.length }}</span>
+		<div>
+			<button type="button" (click)="previousPage()" [disabled]="page() === 0">Previous</button>
+			<button type="button" (click)="nextPage()" [disabled]="page() >= pageCount - 1">Next</button>
+		</div>
+	</div>
+} @else if (holdings.length) {
+	<p class="empty-inline">No airports match that search.</p>
+} @else {
+	<p class="empty-inline">No airports held by the company yet.</p>
+}

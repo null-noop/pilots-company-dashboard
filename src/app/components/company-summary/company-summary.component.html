@@ -1,0 +1,36 @@
+<section class="company-heading">
+	<div>
+		<p class="eyebrow">Company operations</p>
+		<h1>{{ company.name }}</h1>
+		<p class="company-meta"><span>{{ company.tag }}</span><span>{{ memberCount }} members</span><span>{{ company.bases.length }} bases</span></p>
+	</div>
+	<div class="updated">Updated <strong>{{ updatedAt ? formatTime(updatedAt) : '—' }}</strong></div>
+</section>
+
+<section class="metrics" aria-label="Company overview">
+	<article class="metric">
+		<span class="metric-label">Treasury</span>
+		<strong class="metric-value tone-money">{{ formatMoney(company.treasury) }}</strong>
+		<span class="metric-note">Company funds</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Active flights</span>
+		<strong class="metric-value tone-flight">{{ flights.length }}</strong>
+		<span class="metric-note">Aircraft airborne</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Airport holdings</span>
+		<strong class="metric-value tone-asset">{{ formatMoney(heldValue) }}</strong>
+		<span class="metric-note">{{ holdingCount }} airports</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Company fleet</span>
+		<strong class="metric-value tone-fleet">{{ company.fleet.length }}</strong>
+		<span class="metric-note">Aircraft owned</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Jobs completed</span>
+		<strong class="metric-value tone-work">{{ company.stats.jobs | number }}</strong>
+		<span class="metric-note">{{ company.stats.units | number }} units delivered</span>
+	</article>
+</section>

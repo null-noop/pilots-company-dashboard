@@ -1,0 +1,35 @@
+<header class="topbar">
+	<a class="brand" href="/" aria-label="Pocket Pilots company dashboard">
+		<span class="brand-copy"><strong>Pocket Pilots</strong><small>Company dashboard</small></span>
+	</a>
+
+	<form class="connection-form" (ngSubmit)="connectRequested.emit()">
+		<label for="sync-code">Sync code</label>
+		<div class="sync-field">
+			<input
+				id="sync-code"
+				type="password"
+				autocomplete="off"
+				placeholder="Enter sync code"
+				[ngModel]="syncCode"
+				(ngModelChange)="syncCodeChange.emit($event)"
+				name="syncCode"
+			/>
+			<small class="sync-note">Saved only in this browser.</small>
+		</div>
+		<button type="submit" [disabled]="busy">
+			{{ busy ? 'Connecting' : connected ? 'Refresh' : 'Connect' }}
+		</button>
+	</form>
+
+	<button
+		class="theme-toggle"
+		type="button"
+		[attr.aria-pressed]="darkMode"
+		[attr.aria-label]="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+		(click)="themeToggle.emit()"
+	>
+		<span>{{ darkMode ? 'Dark' : 'Light' }}</span>
+		<span class="toggle-track" aria-hidden="true"><span class="toggle-knob"></span></span>
+	</button>
+</header>

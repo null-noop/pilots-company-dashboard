@@ -1,0 +1,11 @@
+<div class="panel-heading"><div><p class="eyebrow">Owned aircraft</p><h2>Company fleet</h2></div></div>
+<div class="fleet-list">
+	@for (plane of fleet; track plane.reg) {
+		<div class="fleet-row">
+			<span class="fleet-details"><strong>{{ plane.reg }}</strong><small>{{ plane.type }}</small></span>
+			<span class="fleet-location" [class.in-flight]="!plane.at">{{ plane.at?.code ?? 'IN FLIGHT' }}</span>
+		</div>
+	} @empty {
+		<p class="empty-inline">No company aircraft in the fleet.</p>
+	}
+</div>

@@ -1,221 +1,32 @@
 <main class="dashboard-shell">
-	<header class="topbar">
-		<a class="brand" href="/" aria-label="Pocket Pilots company dashboard">
-			<span class="brand-copy"><strong>Pocket Pilots</strong><small>Company dashboard</small></span>
-		</a>
-
-		<form class="connection-form" (ngSubmit)="connect()">
-			<label for="sync-code">Sync code</label>
-			<div class="sync-field">
-				<input
-					id="sync-code"
-					type="password"
-					autocomplete="off"
-					placeholder="Enter sync code"
-					[ngModel]="syncCode()"
-					(ngModelChange)="syncCode.set($event)"
-					name="syncCode"
-				/>
-				<small class="sync-note">Saved only in this browser.</small>
-			</div>
-			<button type="submit" [disabled]="busy()">
-				{{ busy() ? 'Connecting' : company() ? 'Refresh' : 'Connect' }}
-			</button>
-		</form>
-
-		<button
-			class="theme-toggle"
-			type="button"
-			[attr.aria-pressed]="darkMode()"
-			[attr.aria-label]="darkMode() ? 'Switch to light mode' : 'Switch to dark mode'"
-			(click)="toggleTheme()"
-		>
-			<span>{{ darkMode() ? 'Dark' : 'Light' }}</span>
-			<span class="toggle-track" aria-hidden="true"><span class="toggle-knob"></span></span>
-		</button>
-	</header>
+	<app-dashboard-header
+		[syncCode]="syncCode()"
+		[busy]="busy()"
+		[connected]="!!company()"
+		[darkMode]="darkMode()"
+		(syncCodeChange)="syncCode.set($event)"
+		(connectRequested)="connect()"
+		(themeToggle)="toggleTheme()"
+	/>
 
 	@if (error()) {
 		<div class="error-banner" role="alert">{{ error() }}</div>
 	}
 
 	@if (company(); as co) {
-		<section class="company-heading">
-			<div>
-				<p class="eyebrow">Company operations</p>
-				<h1>{{ co.name }}</h1>
-				<p class="company-meta"><span>{{ co.tag }}</span><span>{{ memberCount }} members</span><span>{{ co.bases.length }} bases</span></p>
-			</div>
-			<div class="updated">Updated <strong>{{ updatedAt() ? formatTime(updatedAt()!) : '—' }}</strong></div>
-		</section>
-
-		<section class="metrics" aria-label="Company overview">
-			<article class="metric">
-				<span class="metric-label">Treasury</span>
-				<strong class="metric-value tone-money">{{ formatMoney(co.treasury) }}</strong>
-				<span class="metric-note">Company funds</span>
-			</article>
-			<article class="metric">
-				<span class="metric-label">Active flights</span>
-				<strong class="metric-value tone-flight">{{ air()?.flights?.length ?? 0 }}</strong>
-				<span class="metric-note">Aircraft airborne</span>
-			</article>
-			<article class="metric">
-				<span class="metric-label">Airport holdings</span>
-				<strong class="metric-value tone-asset">{{ formatMoney(heldValue) }}</strong>
-				<span class="metric-note">{{ holdings.length }} airports</span>
-			</article>
-			<article class="metric">
-				<span class="metric-label">Company fleet</span>
-				<strong class="metric-value tone-fleet">{{ co.fleet.length }}</strong>
-				<span class="metric-note">Aircraft owned</span>
-			</article>
-			<article class="metric">
-				<span class="metric-label">Jobs completed</span>
-				<strong class="metric-value tone-work">{{ co.stats.jobs | number }}</strong>
-				<span class="metric-note">{{ co.stats.units | number }} units delivered</span>
-			</article>
-		</section>
+		<app-company-summary [company]="co" [flights]="air()?.flights ?? []" [held]="air()?.held ?? {}" [updatedAt]="updatedAt()" />
 
 		<div class="content-grid">
-			<section class="panel flights-panel">
-				<div class="panel-heading">
-					<div><p class="eyebrow">Network</p><h2>Active flights</h2></div>
-					<span class="count-badge">{{ air()?.flights?.length ?? 0 }}</span>
-				</div>
-				@if (air()?.flights?.length) {
-					<div class="table-scroll">
-						<table>
-							<thead><tr><th>Flight</th><th>Route</th><th>Aircraft</th><th>ETA</th></tr></thead>
-							<tbody>
-								@for (flight of air()?.flights ?? []; track flight.pid) {
-									<tr>
-										<td><strong>{{ flight.cs }}</strong><small>{{ flight.pid }}</small></td>
-										<td><strong>{{ flight.from.code }} <span class="route-arrow">→</span> {{ flight.to.code }}</strong><small>{{ flight.to.name }}</small></td>
-										<td><strong>{{ flight.reg }}</strong><small class="aircraft-type">{{ flight.type }}</small></td>
-										<td class="value-flight"><span class="eta-dot"></span>{{ formatDuration(remainingFlightSeconds(flight)) }}</td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				} @else {
-					<p class="empty-inline">No company aircraft are currently airborne.</p>
-				}
-			</section>
-
-			<section class="panel holdings-panel">
-				<div class="panel-heading">
-					<div><p class="eyebrow">Airports</p><h2>Company holdings</h2></div>
-					<span class="count-badge">{{ holdings.length }}</span>
-				</div>
-				@if (holdings.length) {
-					<div class="holdings-controls">
-						<label class="holdings-search">Search airport
-							<input type="search" [ngModel]="holdingsSearch()" (ngModelChange)="setHoldingsSearch($event)" name="holdingsSearch" placeholder="Airport code" />
-						</label>
-						<label>Sort by
-							<select [ngModel]="holdingsSort()" (ngModelChange)="setHoldingsSort($event)" name="holdingsSort">
-								<option value="value">Value</option>
-								<option value="code">Airport code</option>
-							</select>
-						</label>
-						<button class="holdings-sort-direction" type="button" (click)="toggleHoldingsSortDirection()" [attr.aria-label]="'Sort ' + (holdingsSort() === 'code' ? 'airport code' : 'value') + ' ' + (holdingsSortDirection() === 'asc' ? 'descending' : 'ascending')" title="Change sort direction">
-							{{ holdingsSortDirection() === 'asc' ? '↑' : '↓' }}
-						</button>
-					</div>
-				}
-				@if (filteredHoldings.length) {
-					<div class="holdings-list">
-						@for (holding of paginatedHoldings; track holding.code) {
-							<div class="holding-row">
-								<span class="airport-code">{{ holding.code }}</span>
-								<span class="holding-location">{{ holding.lat | number:'1.2-2' }}, {{ holding.lon | number:'1.2-2' }}</span>
-								<strong class="value-money">{{ formatMoney(holding.value) }}</strong>
-							</div>
-						}
-					</div>
-					<div class="holdings-pagination">
-						<span>Showing {{ holdingsRangeStart }}–{{ holdingsRangeEnd }} of {{ filteredHoldings.length }}</span>
-						<div>
-							<button type="button" (click)="previousHoldingsPage()" [disabled]="holdingsPage() === 0">Previous</button>
-							<button type="button" (click)="nextHoldingsPage()" [disabled]="holdingsPage() >= holdingsPageCount - 1">Next</button>
-						</div>
-					</div>
-				} @else if (holdings.length) {
-					<p class="empty-inline">No airports match that search.</p>
-				} @else {
-					<p class="empty-inline">No airports held by the company yet.</p>
-				}
-			</section>
-
-			<section class="panel fleet-panel">
-				<div class="panel-heading"><div><p class="eyebrow">Owned aircraft</p><h2>Company fleet</h2></div></div>
-				<div class="fleet-list">
-					@for (plane of co.fleet; track plane.reg) {
-						<div class="fleet-row">
-							<span class="fleet-details"><strong>{{ plane.reg }}</strong><small>{{ plane.type }}</small></span>
-							<span class="fleet-location" [class.in-flight]="!plane.at">{{ plane.at?.code ?? 'IN FLIGHT' }}</span>
-						</div>
-					} @empty {
-						<p class="empty-inline">No company aircraft in the fleet.</p>
-					}
-				</div>
-			</section>
-
-			<section class="panel activity-panel">
-				<div class="panel-heading"><div><p class="eyebrow">Company ledger</p><h2>Recent activity</h2></div></div>
-				<div class="activity-list">
-					@for (entry of co.log.slice().reverse(); track entry.t) {
-						<div class="activity-row">
-							<span class="activity-time">{{ formatDate(entry.t) }}<small>{{ formatTime(entry.t) }}</small></span>
-							<span>
-								@if (activityMoney(entry.text); as money) {
-									{{ money.before }}<strong [class.activity-money-in]="money.direction === 'in'" [class.activity-money-out]="money.direction === 'out'">{{ money.amount }}</strong>{{ money.after }}
-								} @else {
-									{{ entry.text }}
-								}
-							</span>
-						</div>
-					} @empty {
-						<p class="empty-inline">Company activity will appear here.</p>
-					}
-				</div>
-			</section>
-
-			<section class="panel members-panel">
-				<div class="panel-heading">
-					<div><p class="eyebrow">People</p><h2>Member profiles</h2></div>
-					<span class="count-badge">{{ memberProfiles.length }}</span>
-				</div>
-				@if (memberProfiles.length) {
-					<div class="table-scroll">
-						<table>
-							<thead><tr><th>Pilot</th><th>Rank</th><th>Location</th><th>Company jobs</th><th>Earned from company jobs</th><th>Last seen</th><th>Company funds</th></tr></thead>
-							<tbody>
-								@for (member of memberProfiles; track member.pid) {
-									<tr>
-										<td><strong>{{ member.cs || 'Unknown callsign' }}</strong><small>{{ member.pid }}</small></td>
-										<td>{{ formatRank(member.rank) }}</td>
-										<td>{{ member.at ?? 'Not reported' }}</td>
-										<td class="value-work">{{ member.jobs ?? 0 | number }}</td>
-										<td class="value-money">{{ member.earned != null ? formatMoney(member.earned) : '—' }}</td>
-										<td>{{ member.seen ? formatDateTime(member.seen) : '—' }}</td>
-										<td class="member-funds"><span>Gave <strong class="value-money">{{ member.gave != null ? formatMoney(member.gave) : '—' }}</strong></span><span>Brought <strong class="value-money">{{ member.brought != null ? formatMoney(member.brought) : '—' }}</strong></span></td>
-									</tr>
-								}
-							</tbody>
-						</table>
-					</div>
-				} @else {
-					<p class="empty-inline">Member profiles are not available.</p>
-				}
-			</section>
+			<app-flights-panel class="panel flights-panel" [flights]="air()?.flights ?? []" [now]="air()?.now" />
+			<app-holdings-panel class="panel holdings-panel" [held]="air()?.held ?? {}" />
+			<app-fleet-panel class="panel fleet-panel" [fleet]="co.fleet" />
+			<app-activity-panel class="panel activity-panel" [entries]="co.log" />
+			<app-members-panel class="panel members-panel" [members]="co.members" />
 		</div>
 	} @else {
 		<section class="empty-state">
-			<h1>Company dashboard</h1>
-			<p>Enter your sync code above to load company flights, holdings, fleet, and treasury.</p>
+			<h1>No company connected</h1>
+			<p>Connect above to load company data.</p>
 		</section>
 	}
 

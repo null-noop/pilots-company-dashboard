@@ -1,0 +1,17 @@
+<div class="panel-heading"><div><p class="eyebrow">Company ledger</p><h2>Recent activity</h2></div></div>
+<div class="activity-list">
+	@for (entry of entries.slice().reverse(); track entry.t) {
+		<div class="activity-row">
+			<span class="activity-time">{{ formatDate(entry.t) }}<small>{{ formatTime(entry.t) }}</small></span>
+			<span>
+				@if (activityMoney(entry.text); as money) {
+					{{ money.before }}<strong [class.activity-money-in]="money.direction === 'in'" [class.activity-money-out]="money.direction === 'out'">{{ money.amount }}</strong>{{ money.after }}
+				} @else {
+					{{ entry.text }}
+				}
+			</span>
+		</div>
+	} @empty {
+		<p class="empty-inline">Company activity will appear here.</p>
+	}
+</div>

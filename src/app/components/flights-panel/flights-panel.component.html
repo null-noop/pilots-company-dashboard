@@ -1,0 +1,23 @@
+<div class="panel-heading">
+	<div><p class="eyebrow">Network</p><h2>Active flights</h2></div>
+	<span class="count-badge">{{ flights.length }}</span>
+</div>
+@if (flights.length) {
+	<div class="table-scroll">
+		<table>
+			<thead><tr><th>Flight</th><th>Route</th><th>Aircraft</th><th>ETA</th></tr></thead>
+			<tbody>
+				@for (flight of flights; track flight.pid) {
+					<tr>
+						<td><strong>{{ flight.cs }}</strong><small>{{ flight.pid }}</small></td>
+						<td><strong>{{ flight.from.code }} <span class="route-arrow">→</span> {{ flight.to.code }}</strong><small>{{ flight.to.name }}</small></td>
+						<td><strong>{{ flight.reg }}</strong><small class="aircraft-type">{{ flight.type }}</small></td>
+						<td class="value-flight"><span class="eta-dot"></span>{{ formatDuration(remainingFlightSeconds(flight)) }}</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+} @else {
+	<p class="empty-inline">No company aircraft are currently airborne.</p>
+}
