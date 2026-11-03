@@ -12,6 +12,7 @@ interface CompanyFlight {
   cs: string;
   type: string;
   reg: string;
+  t0: number;
   from: Airport;
   to: Airport;
   eta: number;
@@ -58,6 +59,16 @@ interface AirResponse {
   held?: Record<string, Holding>;
 }
 
+interface ActivityMoney {
+  before: string;
+  amount: string;
+  after: string;
+  direction: 'in' | 'out' | 'neutral';
+}
+
+type HoldingSort = 'code' | 'value';
+type SortDirection = 'asc' | 'desc';
+
 const API_URL = '/api';
 const SYNC_CODE_KEY = 'pilots-company-dashboard-sync-code';
 const THEME_KEY = 'pilots-company-dashboard-theme';
@@ -76,6 +87,11 @@ export class App implements OnInit {
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly updatedAt = signal<number | null>(null);
+  protected readonly holdingsSearch = signal('');
+  protected readonly holdingsSort = signal<HoldingSort>('value');
+  protected readonly holdingsSortDirection = signal<SortDirection>('desc');
+  protected readonly holdingsPage = signal(0);
+  protected readonly holdingsPageSize = 8;
 
   protected get heldValue(): number {
     return Object.values(this.air()?.held ?? {}).reduce((total, holding) => total + holding.v, 0);
@@ -95,6 +111,61 @@ export class App implements OnInit {
     return Object.entries(this.air()?.held ?? {})
       .map(([code, holding]) => ({ code, value: holding.v, lat: holding.lat, lon: holding.lon }))
       .sort((left, right) => right.value - left.value);
+  }
+
+  protected get filteredHoldings(): Array<{ code: string; value: number; lat: number; lon: number }> {
+    const query = this.holdingsSearch().trim().toUpperCase();
+    const direction = this.holdingsSortDirection() === 'asc' ? 1 : -1;
+
+    return this.holdings
+      .filter((holding) => holding.code.toUpperCase().includes(query))
+      .sort((left, right) => {
+        const comparison = this.holdingsSort() === 'code'
+          ? left.code.localeCompare(right.code)
+          : left.value - right.value;
+        return comparison * direction;
+      });
+  }
+
+  protected get paginatedHoldings(): Array<{ code: string; value: number; lat: number; lon: number }> {
+    const start = this.holdingsPage() * this.holdingsPageSize;
+    return this.filteredHoldings.slice(start, start + this.holdingsPageSize);
+  }
+
+  protected get holdingsRangeStart(): number {
+    return this.filteredHoldings.length ? this.holdingsPage() * this.holdingsPageSize + 1 : 0;
+  }
+
+  protected get holdingsRangeEnd(): number {
+    return Math.min((this.holdingsPage() + 1) * this.holdingsPageSize, this.filteredHoldings.length);
+  }
+
+  protected get holdingsPageCount(): number {
+    return Math.ceil(this.filteredHoldings.length / this.holdingsPageSize);
+  }
+
+  protected setHoldingsSearch(query: string): void {
+    this.holdingsSearch.set(query);
+    this.holdingsPage.set(0);
+  }
+
+  protected setHoldingsSort(sort: HoldingSort): void {
+    this.holdingsSort.set(sort);
+    this.holdingsSortDirection.set(sort === 'code' ? 'asc' : 'desc');
+    this.holdingsPage.set(0);
+  }
+
+  protected toggleHoldingsSortDirection(): void {
+    this.holdingsSortDirection.update((direction) => direction === 'asc' ? 'desc' : 'asc');
+    this.holdingsPage.set(0);
+  }
+
+  protected previousHoldingsPage(): void {
+    this.holdingsPage.update((page) => Math.max(0, page - 1));
+  }
+
+  protected nextHoldingsPage(): void {
+    this.holdingsPage.update((page) => Math.min(page + 1, Math.max(0, this.holdingsPageCount - 1)));
   }
 
   ngOnInit(): void {
@@ -161,8 +232,32 @@ export class App implements OnInit {
     return hours ? `${hours}h ${minutes}m` : `${minutes}m`;
   }
 
+  protected remainingFlightSeconds(flight: CompanyFlight): number {
+    const now = this.air()?.now ?? Date.now();
+    return Math.max(0, Math.ceil(flight.eta - (now - flight.t0) / 1000));
+  }
+
   protected formatTime(timestamp: number): string {
     return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(timestamp);
+  }
+
+  protected formatDate(timestamp: number): string {
+    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(timestamp);
+  }
+
+  protected activityMoney(text: string): ActivityMoney | null {
+    const match = /\$[\d,]+(?:\.\d{2})?/.exec(text);
+    if (!match || match.index === undefined) return null;
+
+    const amount = match[0];
+    return {
+      before: text.slice(0, match.index),
+      amount,
+      after: text.slice(match.index + amount.length),
+      direction: /\b(?:put in|contributed|deposited|received|earned|sold)\b/i.test(text)
+        ? 'in'
+        : /\bbought\b/i.test(text) ? 'out' : 'neutral',
+    };
   }
 
   protected formatDateTime(timestamp: number): string {

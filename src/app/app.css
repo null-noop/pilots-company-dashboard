@@ -6,8 +6,9 @@
 .brand-copy { display: grid; gap: 2px; }
 .brand-copy strong { font-size: 14px; font-weight: 600; }
 .brand-copy small { color: var(--muted); font-size: 11px; }
-.connection-form { display: flex; align-items: center; gap: 9px; margin-left: auto; }
+.connection-form { display: flex; align-items: flex-start; gap: 9px; margin-left: auto; }
 .connection-form label { color: var(--muted); font-size: 12px; }
+.connection-form > label { height: 36px; display: flex; align-items: center; }
 .sync-field { display: grid; gap: 3px; }
 .connection-form input { width: 210px; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); font: 12px var(--mono); }
 .connection-form input::placeholder { color: var(--muted); }
@@ -47,6 +48,7 @@
 
 .content-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(300px, .9fr); gap: 14px; padding-top: 18px; }
 .panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+.holdings-panel { display: flex; flex-direction: column; }
 .members-panel { grid-column: 1 / -1; }
 .panel-heading { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px 11px; }
 .panel-heading .eyebrow { margin-bottom: 3px; }
@@ -67,7 +69,19 @@ td small { margin-top: 3px; color: var(--muted); font-size: 11px; }
 .empty-inline { margin: 0; padding: 16px; color: var(--muted); font-size: 13px; }
 
 .holdings-list, .fleet-list, .activity-list { padding: 0 16px 10px; }
-.holding-row { display: grid; grid-template-columns: 58px 1fr auto; align-items: center; gap: 9px; min-height: 40px; border-bottom: 1px solid var(--line); }
+.holdings-list { display: flex; flex: 1; flex-direction: column; }
+.holdings-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto 36px; align-items: end; gap: 8px; padding: 0 16px 12px; }
+.holdings-controls label { display: grid; gap: 5px; color: var(--muted); font-size: 10px; }
+.holdings-controls input, .holdings-controls select, .holdings-sort-direction, .holdings-pagination button { height: 34px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--ink); font: inherit; }
+.holdings-controls input, .holdings-controls select { padding: 0 9px; font-size: 11px; }
+.holdings-controls input { width: 100%; min-width: 0; }
+.holdings-sort-direction { cursor: pointer; font-size: 15px; }
+.holdings-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 12px; color: var(--muted); font-size: 10px; }
+.holdings-pagination div { display: flex; gap: 6px; }
+.holdings-pagination button { padding: 0 9px; cursor: pointer; font-size: 10px; }
+.holdings-pagination button:disabled { cursor: default; opacity: .5; }
+.activity-list { max-height: 320px; overflow-y: auto; overscroll-behavior: contain; }
+.holding-row { display: grid; flex: 1; grid-template-columns: 58px 1fr auto; align-items: center; gap: 9px; min-height: 40px; border-bottom: 1px solid var(--line); }
 .airport-code { color: var(--ink); font: 500 11px var(--mono); }
 .holding-location { overflow: hidden; color: var(--muted); font: 10px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 .holding-row strong { font: 500 11px var(--mono); font-variant-numeric: tabular-nums; }
@@ -82,8 +96,11 @@ td small { margin-top: 3px; color: var(--muted); font-size: 11px; }
 .member-funds span { display: block; color: var(--muted); font-size: 11px; }
 .member-funds strong { font-weight: 500; }
 .member-funds span + span { margin-top: 3px; }
-.activity-row { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.45; }
-.activity-time { color: var(--muted); font: 10px var(--mono); }
+.activity-row { display: grid; grid-template-columns: 86px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.45; }
+.activity-time { display: grid; align-content: start; gap: 2px; color: var(--muted); font: 10px var(--mono); }
+.activity-time small { color: var(--muted); font: inherit; }
+.activity-money-in { color: var(--money); }
+.activity-money-out { color: var(--coral); }
 .empty-state { margin: 28px 0; padding: 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
 .empty-state h1 { margin: 0 0 6px; font-size: 20px; font-weight: 600; }
 .empty-state p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -116,5 +133,7 @@ td small { margin-top: 3px; color: var(--muted); font-size: 11px; }
 	.content-grid { gap: 12px; padding-top: 14px; }
 	.panel-heading { padding: 13px 12px 9px; }
 	.holdings-list, .fleet-list, .activity-list { padding-right: 12px; padding-left: 12px; }
+	.holdings-controls, .holdings-pagination { padding-right: 12px; padding-left: 12px; }
+	.holdings-controls { grid-template-columns: minmax(0, 1fr) auto 36px; }
 	.page-footer { flex-direction: column; gap: 6px; }
 }
