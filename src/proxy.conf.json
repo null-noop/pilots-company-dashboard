@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://pilots.nimblebit.com",
+    "secure": true,
+    "changeOrigin": true
+  }
+}

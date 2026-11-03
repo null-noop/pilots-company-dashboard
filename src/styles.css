@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+	color-scheme: light;
+	--paper: #f3f5f7;
+	--surface: #ffffff;
+	--ink: #263440;
+	--green: #146c61;
+	--coral: #a24f3f;
+	--muted: #63717d;
+	--line: #d9e0e5;
+	--wash: #eef2f5;
+	--money: #16745f;
+	--flight: #28658f;
+	--asset: #936a13;
+	--fleet: #526782;
+	--work: #a24f3f;
+	--mono: 'DM Mono', 'Courier New', monospace;
+	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	color: var(--ink);
+	background: var(--paper);
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme='dark'] {
+	color-scheme: dark;
+	--paper: #141a20;
+	--surface: #1c252d;
+	--ink: #e2e9ef;
+	--green: #75c4b5;
+	--coral: #e2947f;
+	--muted: #a0afbb;
+	--line: #35434e;
+	--wash: #25323c;
+	--money: #78c9ae;
+	--flight: #82bde3;
+	--asset: #e8c575;
+	--fleet: #adbed4;
+	--work: #ef9f8c;
+}
+
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; }
+button, input { font: inherit; }
+::selection { background: #d4e4da; color: var(--ink); }
