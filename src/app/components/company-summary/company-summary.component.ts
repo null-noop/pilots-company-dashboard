@@ -11,6 +11,7 @@ export class CompanySummaryComponent {
   @Input({ required: true }) company!: Company;
   @Input() flights: CompanyFlight[] = [];
   @Input() held: Record<string, Holding> = {};
+  @Input() pilotMoney: number | null = null;
   @Input() updatedAt: number | null = null;
 
   protected get memberCount(): number {
@@ -21,7 +22,7 @@ export class CompanySummaryComponent {
     return Object.keys(this.held).length;
   }
 
-  protected get heldValue(): number {
+  protected get deliveredJobValue(): number {
     return Object.values(this.held).reduce((total, holding) => total + holding.v, 0);
   }
 

@@ -1,0 +1,13 @@
+:host { display: flex; flex-direction: column; }
+.taken-list { flex: 1; min-height: 0; max-height: 500px; overflow-y: auto; padding: 0 16px 10px; overscroll-behavior: contain; }
+.taken-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: center; gap: 9px; min-height: 46px; border-bottom: 1px solid var(--line); }
+.taken-details { min-width: 0; }
+.taken-details strong, .taken-details small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.taken-details strong { font-size: 11px; font-weight: 500; }
+.taken-details small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.taken-status { color: var(--green); font-size: 10px; }
+.taken-status-lost { color: var(--coral); }
+
+@media (max-width: 640px) {
+	.taken-list { max-height: 360px; padding-right: 12px; padding-left: 12px; }
+}

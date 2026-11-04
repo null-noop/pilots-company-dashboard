@@ -9,7 +9,8 @@
 		</label>
 		<label>Sort by
 			<select [ngModel]="sort()" (ngModelChange)="setSort($event)" name="holdingsSort">
-				<option value="value">Value</option>
+				<option value="jobValue">Job value</option>
+				<option value="feeRevenue">Fee revenue</option>
 				<option value="code">Airport code</option>
 			</select>
 		</label>
@@ -20,11 +21,13 @@
 }
 @if (filteredHoldings.length) {
 	<div class="holdings-list">
+		<div class="holding-row holding-header" aria-hidden="true"><span>Airport</span><span>Location</span><span title="Value of jobs delivered to this airport">Job value</span><span title="Fee revenue across available book history">Fee revenue</span></div>
 		@for (holding of paginatedHoldings; track holding.code) {
 			<div class="holding-row">
 				<span class="airport-code">{{ holding.code }}</span>
 				<span class="holding-location">{{ holding.lat | number:'1.2-2' }}, {{ holding.lon | number:'1.2-2' }}</span>
-				<strong class="value-money">{{ formatMoney(holding.value) }}</strong>
+				<strong class="value-job-value">{{ formatMoney(holding.jobValue) }}</strong>
+				<strong class="value-money">{{ holding.feeRevenue !== null ? formatMoney(holding.feeRevenue) : '—' }}</strong>
 			</div>
 		}
 	</div>

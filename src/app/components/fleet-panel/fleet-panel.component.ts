@@ -7,4 +7,5 @@ import { Company } from '../../models/dashboard.models';
 })
 export class FleetPanelComponent {
   @Input() fleet: Company['fleet'] = [];
+  @Input() bases: Company['bases'] = [];
 }

@@ -32,6 +32,23 @@ export interface CompanyMember {
   brought?: number;
 }
 
+export interface CompanyTaken {
+  t: number;
+  code: string;
+  cs: string;
+  co: string;
+  lost: boolean;
+}
+
+export interface CompanyBookEntry {
+  h: number;
+  k: string;
+  of: string;
+  amt: number;
+  n: number;
+  cost?: number;
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -40,6 +57,8 @@ export interface Company {
   members: Record<string, CompanyMember>;
   fleet: Array<{ reg: string; type: string; at: Airport | null }>;
   bases: Array<{ code: string; name: string; gates: number }>;
+  taken?: CompanyTaken[];
+  book?: CompanyBookEntry[];
   log: Array<{ t: number; text: string }>;
   stats: { jobs: number; units: number; earned: number };
 }

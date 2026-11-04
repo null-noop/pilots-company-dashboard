@@ -9,3 +9,16 @@
 		<p class="empty-inline">No company aircraft in the fleet.</p>
 	}
 </div>
+
+<section class="bases-section" aria-label="Operating bases">
+	<div class="bases-heading"><h2>Operating bases</h2><span class="count-badge">{{ bases.length }}</span></div>
+	<div class="bases-list">
+		@for (base of bases; track base.code) {
+			<div class="base-row">
+				<strong>{{ base.code }}</strong>
+				<span>{{ base.name }}</span>
+				<small>{{ base.gates }} {{ base.gates === 1 ? 'gate' : 'gates' }}</small>
+			</div>
+		}
+	</div>
+</section>

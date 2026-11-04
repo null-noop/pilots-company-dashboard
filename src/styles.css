@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
 	color-scheme: light;
@@ -13,10 +13,11 @@
 	--money: #16745f;
 	--flight: #28658f;
 	--asset: #936a13;
+	--job-value: #946400;
 	--fleet: #526782;
 	--work: #a24f3f;
 	--mono: 'DM Mono', 'Courier New', monospace;
-	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	font-family: 'Inter', 'Segoe UI', sans-serif;
 	color: var(--ink);
 	background: var(--paper);
 	font-synthesis: none;
@@ -38,11 +39,16 @@
 	--money: #78c9ae;
 	--flight: #82bde3;
 	--asset: #e8c575;
+	--job-value: #f1ca58;
 	--fleet: #adbed4;
 	--work: #ef9f8c;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; scrollbar-color: var(--line) var(--wash); scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { border-radius: 4px; background: var(--wash); }
+*::-webkit-scrollbar-thumb { border: 2px solid var(--wash); border-radius: 4px; background: var(--line); }
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 body { min-width: 320px; min-height: 100vh; margin: 0; }
 button, input { font: inherit; }
 ::selection { background: #d4e4da; color: var(--ink); }

@@ -5,13 +5,14 @@
 @if (profiles.length) {
 	<div class="table-scroll">
 		<table>
-			<thead><tr><th>Pilot</th><th>Rank</th><th>Location</th><th>Company jobs</th><th>Earned from company jobs</th><th>Last seen</th><th>Company funds</th></tr></thead>
+			<thead><tr><th>Pilot</th><th>Rank</th><th>Location</th><th>Joined</th><th>Company jobs</th><th>Earned from company jobs</th><th>Last seen</th><th>Company funds</th></tr></thead>
 			<tbody>
 				@for (member of profiles; track member.pid) {
 					<tr>
 						<td><strong>{{ member.cs || 'Unknown callsign' }}</strong><small>{{ member.pid }}</small></td>
 						<td>{{ formatRank(member.rank) }}</td>
 						<td>{{ member.at ?? 'Not reported' }}</td>
+						<td>{{ member.joined ? formatDateTime(member.joined) : '—' }}</td>
 						<td class="value-work">{{ member.jobs ?? 0 | number }}</td>
 						<td class="value-money">{{ member.earned != null ? formatMoney(member.earned) : '—' }}</td>
 						<td>{{ member.seen ? formatDateTime(member.seen) : '—' }}</td>

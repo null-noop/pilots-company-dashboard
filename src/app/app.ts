@@ -1,9 +1,11 @@
 import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { AirResponse, CareerResponse, Company } from './models/dashboard.models';
+import { CompanyBookPanelComponent } from './components/company-book-panel/company-book-panel.component';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { CompanySummaryComponent } from './components/company-summary/company-summary.component';
 import { FlightsPanelComponent } from './components/flights-panel/flights-panel.component';
 import { HoldingsPanelComponent } from './components/holdings-panel/holdings-panel.component';
+import { TakenAirportsPanelComponent } from './components/taken-airports-panel/taken-airports-panel.component';
 import { FleetPanelComponent } from './components/fleet-panel/fleet-panel.component';
 import { ActivityPanelComponent } from './components/activity-panel/activity-panel.component';
 import { MembersPanelComponent } from './components/members-panel/members-panel.component';
@@ -14,7 +16,7 @@ const THEME_KEY = 'pilots-company-dashboard-theme';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  imports: [ActivityPanelComponent, CompanySummaryComponent, DashboardHeaderComponent, FleetPanelComponent, FlightsPanelComponent, HoldingsPanelComponent, MembersPanelComponent],
+  imports: [ActivityPanelComponent, CompanyBookPanelComponent, CompanySummaryComponent, DashboardHeaderComponent, FleetPanelComponent, FlightsPanelComponent, HoldingsPanelComponent, MembersPanelComponent, TakenAirportsPanelComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
@@ -24,6 +26,7 @@ export class App implements OnInit {
   protected readonly darkMode = signal(localStorage.getItem(THEME_KEY) === 'dark');
   protected readonly company = signal<Company | null>(null);
   protected readonly air = signal<AirResponse | null>(null);
+  protected readonly careerMoney = signal<number | null>(null);
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly updatedAt = signal<number | null>(null);
@@ -72,6 +75,7 @@ export class App implements OnInit {
       localStorage.setItem(SYNC_CODE_KEY, code);
       this.syncCode.set(code);
       this.company.set(careerData.company);
+      this.careerMoney.set(careerData.career?.money ?? null);
       this.air.set(airData);
       this.updatedAt.set(airData.now ?? Date.now());
     } catch (error) {

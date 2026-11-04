@@ -1,0 +1,17 @@
+<div class="panel-heading">
+	<div><p class="eyebrow">Company history</p><h2>Taken airports</h2></div>
+	<span class="count-badge">{{ taken.length }}</span>
+</div>
+@if (recentTaken.length) {
+	<div class="taken-list">
+		@for (entry of recentTaken; track entry.code + entry.t + entry.cs) {
+			<div class="taken-row">
+				<span class="airport-code">{{ entry.code }}</span>
+				<div class="taken-details"><strong>{{ entry.co }}</strong><small>{{ entry.cs }} · {{ entry.t | date:'MMM d, y, h:mm a' }}</small></div>
+				<span class="taken-status" [class.taken-status-lost]="entry.lost">{{ entry.lost ? 'Lost' : 'Held' }}</span>
+			</div>
+		}
+	</div>
+} @else {
+	<p class="empty-inline">No taken-airport activity yet.</p>
+}

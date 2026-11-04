@@ -1,30 +1,45 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Holding } from '../../models/dashboard.models';
+import { CompanyBookEntry, Holding } from '../../models/dashboard.models';
 
-type HoldingSort = 'code' | 'value';
+type HoldingSort = 'code' | 'jobValue' | 'feeRevenue';
 type SortDirection = 'asc' | 'desc';
-interface HoldingRow { code: string; value: number; lat: number; lon: number; }
+interface HoldingRow { code: string; jobValue: number; lat: number; lon: number; feeRevenue: number | null; }
 
 @Component({
   imports: [DecimalPipe, FormsModule],
   selector: 'app-holdings-panel',
+  styleUrl: './holdings-panel.component.css',
   templateUrl: './holdings-panel.component.html',
 })
 export class HoldingsPanelComponent {
   @Input() held: Record<string, Holding> = {};
+  @Input() book: CompanyBookEntry[] | null = null;
 
   protected readonly search = signal('');
-  protected readonly sort = signal<HoldingSort>('value');
+  protected readonly sort = signal<HoldingSort>('feeRevenue');
   protected readonly direction = signal<SortDirection>('desc');
   protected readonly page = signal(0);
   protected readonly pageSize = 8;
 
   protected get holdings(): HoldingRow[] {
+    const feeRevenue = this.book === null ? null : this.book.reduce((revenue, entry) => {
+      if (entry.k === 'fee' && Number.isFinite(entry.amt)) {
+        revenue.set(entry.of, (revenue.get(entry.of) ?? 0) + entry.amt);
+      }
+      return revenue;
+    }, new Map<string, number>());
+
     return Object.entries(this.held)
-      .map(([code, holding]) => ({ code, value: holding.v, lat: holding.lat, lon: holding.lon }))
-      .sort((left, right) => right.value - left.value);
+      .map(([code, holding]) => ({
+        code,
+        jobValue: holding.v,
+        lat: holding.lat,
+        lon: holding.lon,
+        feeRevenue: feeRevenue?.get(code) ?? (feeRevenue ? 0 : null),
+      }))
+      .sort((left, right) => right.jobValue - left.jobValue);
   }
 
   protected get filteredHoldings(): HoldingRow[] {
@@ -36,7 +51,9 @@ export class HoldingsPanelComponent {
       .sort((left, right) => {
         const comparison = this.sort() === 'code'
           ? left.code.localeCompare(right.code)
-          : left.value - right.value;
+          : this.sort() === 'feeRevenue'
+            ? (left.feeRevenue ?? Number.NEGATIVE_INFINITY) - (right.feeRevenue ?? Number.NEGATIVE_INFINITY)
+            : left.jobValue - right.jobValue;
         return comparison * direction;
       });
   }

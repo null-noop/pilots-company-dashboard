@@ -5,18 +5,16 @@
 
 	<form class="connection-form" (ngSubmit)="connectRequested.emit()">
 		<label for="sync-code">Sync code</label>
-		<div class="sync-field">
-			<input
-				id="sync-code"
-				type="password"
-				autocomplete="off"
-				placeholder="Enter sync code"
-				[ngModel]="syncCode"
-				(ngModelChange)="syncCodeChange.emit($event)"
-				name="syncCode"
-			/>
-			<small class="sync-note">Saved only in this browser.</small>
-		</div>
+		<input
+			id="sync-code"
+			type="password"
+			autocomplete="off"
+			placeholder="Enter sync code"
+			[ngModel]="syncCode"
+			(ngModelChange)="syncCodeChange.emit($event)"
+			name="syncCode"
+		/>
+		<small class="sync-note">Saved only in this browser.</small>
 		<button type="submit" [disabled]="busy">
 			{{ busy ? 'Connecting' : connected ? 'Refresh' : 'Connect' }}
 		</button>

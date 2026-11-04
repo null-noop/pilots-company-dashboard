@@ -19,9 +19,9 @@
 		<span class="metric-note">Aircraft airborne</span>
 	</article>
 	<article class="metric">
-		<span class="metric-label">Airport holdings</span>
-		<strong class="metric-value tone-asset">{{ formatMoney(heldValue) }}</strong>
-		<span class="metric-note">{{ holdingCount }} airports</span>
+		<span class="metric-label">Delivered job value</span>
+		<strong class="metric-value tone-job-value">{{ formatMoney(deliveredJobValue) }}</strong>
+		<span class="metric-note">Across {{ holdingCount }} airports</span>
 	</article>
 	<article class="metric">
 		<span class="metric-label">Company fleet</span>
@@ -32,5 +32,15 @@
 		<span class="metric-label">Jobs completed</span>
 		<strong class="metric-value tone-work">{{ company.stats.jobs | number }}</strong>
 		<span class="metric-note">{{ company.stats.units | number }} units delivered</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Combined pilot earnings</span>
+		<strong class="metric-value tone-money">{{ formatMoney(company.stats.earned) }}</strong>
+		<span class="metric-note">Earned while in company</span>
+	</article>
+	<article class="metric">
+		<span class="metric-label">Pilot balance</span>
+		<strong class="metric-value tone-money">{{ pilotMoney != null ? formatMoney(pilotMoney) : '—' }}</strong>
+		<span class="metric-note">Connected pilot</span>
 	</article>
 </section>

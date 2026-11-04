@@ -14,15 +14,17 @@
 	}
 
 	@if (company(); as co) {
-		<app-company-summary [company]="co" [flights]="air()?.flights ?? []" [held]="air()?.held ?? {}" [updatedAt]="updatedAt()" />
+		<app-company-summary [company]="co" [flights]="air()?.flights ?? []" [held]="air()?.held ?? {}" [pilotMoney]="careerMoney()" [updatedAt]="updatedAt()" />
+		<app-company-book-panel class="panel book-panel" [entries]="co.book ?? []" />
+		<app-holdings-panel class="panel holdings-panel" [held]="air()?.held ?? {}" [book]="co.book ?? null" />
 
 		<div class="content-grid">
 			<app-flights-panel class="panel flights-panel" [flights]="air()?.flights ?? []" [now]="air()?.now" />
-			<app-holdings-panel class="panel holdings-panel" [held]="air()?.held ?? {}" />
-			<app-fleet-panel class="panel fleet-panel" [fleet]="co.fleet" />
+			<app-fleet-panel class="panel fleet-panel" [fleet]="co.fleet" [bases]="co.bases" />
+			<app-taken-airports-panel class="panel taken-panel" [taken]="co.taken ?? []" />
 			<app-activity-panel class="panel activity-panel" [entries]="co.log" />
-			<app-members-panel class="panel members-panel" [members]="co.members" />
 		</div>
+		<app-members-panel class="panel members-panel" [members]="co.members" />
 	} @else {
 		<section class="empty-state">
 			<h1>No company connected</h1>

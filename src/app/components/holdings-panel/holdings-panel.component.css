@@ -1,0 +1,4 @@
+.holding-row { display: grid; flex: 1; grid-template-columns: 48px minmax(0, 1fr) 72px 72px; align-items: center; gap: 6px; min-height: 40px; border-bottom: 1px solid var(--line); }
+.holding-header { min-height: 28px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+.holding-header span:nth-child(n + 3), .holding-row strong { text-align: right; }
+.value-job-value { color: var(--job-value); }

@@ -1,0 +1,42 @@
+:host { display: block; }
+.book-totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.book-total { display: grid; gap: 5px; padding: 12px 16px; border-right: 1px solid var(--line); }
+.book-total:last-child { border-right: 0; }
+.book-total span { color: var(--muted); font-size: 11px; }
+.book-total strong { font-size: 20px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.book-fees-total strong { color: var(--asset); }
+.book-flight-total strong { color: var(--money); }
+.book-upkeep-total strong { color: var(--coral); }
+.book-income-total strong { color: var(--ink); }
+.book-chart-section { padding: 14px 16px 16px; }
+.book-chart-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.book-chart-heading h3 { margin: 0; font-size: 13px; font-weight: 600; }
+.book-chart-heading span, .book-note { color: var(--muted); font-size: 10px; }
+.book-chart-bars, .book-axis { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 4px; }
+.book-chart-bars { height: 120px; align-items: end; border-bottom: 1px solid var(--line); }
+.book-hour-slot { display: flex; height: 100%; min-width: 0; align-items: end; justify-content: center; gap: 1px; }
+.book-bar { flex: 1; min-width: 0; max-width: 10px; min-height: 1px; border-radius: 2px 2px 0 0; }
+.book-bar-zero { display: none; }
+.book-fee-bar { background: var(--asset); }
+.book-flight-bar { background: var(--money); }
+.book-upkeep-bar { background: var(--coral); }
+.book-axis { margin-top: 5px; color: var(--muted); font: 9px var(--mono); }
+.book-axis span { white-space: nowrap; }
+.book-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+.book-legend span { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 10px; }
+.book-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; }
+.book-legend-fee { background: var(--asset); }
+.book-legend-flight { background: var(--money); }
+.book-legend-upkeep { background: var(--coral); }
+.book-note { margin: 8px 0 0; }
+
+@media (max-width: 640px) {
+	.book-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.book-total:nth-child(2) { border-right: 0; }
+	.book-total:nth-child(n + 3) { border-top: 1px solid var(--line); }
+	.book-total { padding: 10px 12px; }
+	.book-total strong { font-size: 18px; }
+	.book-chart-section { padding-right: 12px; padding-left: 12px; }
+	.book-chart-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+	.book-chart-bars, .book-axis { gap: 2px; }
+}
